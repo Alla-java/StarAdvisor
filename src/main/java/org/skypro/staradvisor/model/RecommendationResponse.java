@@ -6,9 +6,9 @@ import java.util.UUID;
 
 public class RecommendationResponse{
 private UUID user_id;
-private List<RecommendationDTO> recommendations;
+private List<RecommendationDto> recommendations;
 
-public RecommendationResponse(UUID user_id,List<RecommendationDTO> recommendations){
+public RecommendationResponse(UUID user_id,List<RecommendationDto> recommendations){
     this.user_id=user_id;
     this.recommendations=recommendations;
 }
@@ -21,11 +21,11 @@ public void setUser_id(UUID user_id){
     this.user_id=user_id;
 }
 
-public List<RecommendationDTO> getRecommendations(){
+public List<RecommendationDto> getRecommendations(){
     return recommendations;
 }
 
-public void setRecommendations(List<RecommendationDTO> recommendations){
+public void setRecommendations(List<RecommendationDto> recommendations){
     this.recommendations=recommendations;
 }
 

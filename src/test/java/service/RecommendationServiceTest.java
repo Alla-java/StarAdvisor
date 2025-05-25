@@ -6,7 +6,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import model.RecommendationDto;
+import org.skypro.staradvisor.model.RecommendationDto;
+import org.skypro.staradvisor.service.RecommendationRuleSet;
+import org.skypro.staradvisor.service.RecommendationService;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +23,7 @@ import static org.mockito.Mockito.verify;
 public class RecommendationServiceTest {
 
     @Mock
-    private  RecommendationRuleSet ruleSet1;
+    private RecommendationRuleSet ruleSet1;
 
     @Mock
     private RecommendationRuleSet ruleSet2;

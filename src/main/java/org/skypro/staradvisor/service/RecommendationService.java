@@ -1,5 +1,6 @@
-package service;
+package org.skypro.staradvisor.service;
 
+import org.skypro.staradvisor.model.RecommendationDto;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
