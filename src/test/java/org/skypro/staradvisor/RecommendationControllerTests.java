@@ -9,8 +9,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.skypro.staradvisor.controller.RecommendationController;
-import org.skypro.staradvisor.model.RecommendationDTO;
-import org.skypro.staradvisor.service.RecommendationsService;
+import org.skypro.staradvisor.model.RecommendationDto;
+import org.skypro.staradvisor.service.RecommendationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 
@@ -24,7 +24,7 @@ public class RecommendationControllerTests{
 private MockMvc mockMvc;
 
 @MockitoBean
-private RecommendationsService recommendationsService;
+private RecommendationService recommendationsService;
 
 @Test
 void getExistRecommendations_thenReturnRecommendationsJson() throws Exception{
@@ -33,7 +33,7 @@ void getExistRecommendations_thenReturnRecommendationsJson() throws Exception{
     UUID firstRecommendationId=UUID.randomUUID();
     UUID secondRecommendationId=UUID.randomUUID();
 
-    List<RecommendationDTO> recommendations=List.of(new RecommendationDTO("Продукт A",firstRecommendationId,"Описание A"),new RecommendationDTO("Продукт В",secondRecommendationId,"Описание B"));
+    List<RecommendationDto> recommendations=List.of(new RecommendationDto(firstRecommendationId,"Продукт A","Описание A"),new RecommendationDto(secondRecommendationId,"Продукт В","Описание B"));
 
     when(recommendationsService.getRecommendations(userId)).thenReturn(recommendations);
 

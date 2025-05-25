@@ -1,6 +1,7 @@
 package org.skypro.staradvisor.service;
 
 
+import org.skypro.staradvisor.model.RecommendationDto;
 import org.skypro.staradvisor.repository.RecommendationRepository;
 import org.springframework.stereotype.Service;
 
