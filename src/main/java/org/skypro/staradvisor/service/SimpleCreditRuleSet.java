@@ -44,7 +44,7 @@ public class SimpleCreditRuleSet implements RecommendationRuleSet{
                 RecommendationRepository.PRODUCT_TYPE_DEBIT);
         BigDecimal debitWithdrawals = recommendationRepository.getSumByTransactionTypeAndProductType(
                 userId,
-                RecommendationRepository.TRANSACTION_TYPE_WITHDRAWAL,
+                RecommendationRepository.TRANSACTION_TYPE_WITHDRAW,
                 RecommendationRepository.PRODUCT_TYPE_DEBIT);
 
         if (!hasCredit && debitDeposits.compareTo(debitWithdrawals) > 0 &&

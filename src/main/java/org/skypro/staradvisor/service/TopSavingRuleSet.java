@@ -46,7 +46,7 @@ public class TopSavingRuleSet implements RecommendationRuleSet {
                 RecommendationRepository.PRODUCT_TYPE_SAVING);
         BigDecimal debitWithdrawals = recommendationRepository.getSumByTransactionTypeAndProductType(
                 userId,
-                RecommendationRepository.TRANSACTION_TYPE_WITHDRAWAL,
+                RecommendationRepository.TRANSACTION_TYPE_WITHDRAW,
                 RecommendationRepository.PRODUCT_TYPE_DEBIT);
 
         boolean condition1 = debitDeposits.compareTo(new BigDecimal("50000")) >= 0 ||

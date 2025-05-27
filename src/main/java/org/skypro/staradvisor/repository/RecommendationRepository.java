@@ -16,7 +16,7 @@ public class RecommendationRepository {
     public static final String PRODUCT_TYPE_INVEST = "INVEST";
 
     public static final String TRANSACTION_TYPE_DEPOSIT = "DEPOSIT";
-    public static final String TRANSACTION_TYPE_WITHDRAWAL = "WITHDRAWAL";
+    public static final String TRANSACTION_TYPE_WITHDRAW = "WITHDRAW";
 
     public RecommendationRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
