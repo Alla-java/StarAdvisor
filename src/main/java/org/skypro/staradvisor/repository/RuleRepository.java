@@ -10,7 +10,4 @@ import java.util.UUID;
 
 @Repository
 public interface RuleRepository extends JpaRepository<RecommendationRule, UUID> {
-    Optional<RecommendationRule> findByProductId(UUID productId);
-
-    void deleteByProductId(UUID productId);
 }
