@@ -12,9 +12,9 @@ public class RecommendationRule{
 @GeneratedValue(strategy=GenerationType.AUTO)
 private UUID id;
 
-private String product_name;
-private UUID product_id;
-private String product_text;
+private String productName;
+private UUID productId;
+private String productText;
 
 @Convert(converter=RuleQueryListConverter.class)
 private List<RuleQuery> rule;
@@ -23,9 +23,9 @@ public RecommendationRule(){
 }
 
 public RecommendationRule(String product_name,UUID product_id,String product_text,List<RuleQuery> rule){
-    this.product_name=product_name;
-    this.product_id=product_id;
-    this.product_text=product_text;
+    this.productName=product_name;
+    this.productId=product_id;
+    this.productText=product_text;
     this.rule=rule;
 }
 
@@ -37,28 +37,28 @@ public void setId(UUID id){
     this.id=id;
 }
 
-public String getProduct_name(){
-    return product_name;
+public String getProductName(){
+    return productName;
 }
 
-public void setProduct_name(String product_name){
-    this.product_name=product_name;
+public void setProductName(String product_name){
+    this.productName=product_name;
 }
 
-public UUID getProduct_id(){
-    return product_id;
+public UUID getProductId(){
+    return productId;
 }
 
-public void setProduct_id(UUID product_id){
-    this.product_id=product_id;
+public void setProductId(UUID product_id){
+    this.productId=product_id;
 }
 
-public String getProduct_text(){
-    return product_text;
+public String getProductText(){
+    return productText;
 }
 
-public void setProduct_text(String product_text){
-    this.product_text=product_text;
+public void setProductText(String product_text){
+    this.productText=product_text;
 }
 
 public List<RuleQuery> getRule(){
@@ -76,16 +76,16 @@ public boolean equals(Object o){
     if(o==null||getClass()!=o.getClass())
         return false;
     RecommendationRule recommendationRule=(RecommendationRule)o;
-    return Objects.equals(id,recommendationRule.id)&&Objects.equals(product_name,recommendationRule.product_name)&&Objects.equals(product_id,recommendationRule.product_id)&&Objects.equals(product_text,recommendationRule.product_text)&&Objects.equals(rule,recommendationRule.rule);
+    return Objects.equals(id,recommendationRule.id)&&Objects.equals(productName,recommendationRule.productName)&&Objects.equals(productId,recommendationRule.productId)&&Objects.equals(productText,recommendationRule.productText)&&Objects.equals(rule,recommendationRule.rule);
 }
 
 @Override
 public int hashCode(){
-    return Objects.hash(id,product_name,product_id,product_text,rule);
+    return Objects.hash(id,productName,productId,productText,rule);
 }
 
 @Override
 public String toString(){
-    return "RecommendationRule{"+"id="+id+", product_name='"+product_name+'\''+", product_id="+product_id+", product_text='"+product_text+'\''+", rule="+rule+'}';
+    return "RecommendationRule{"+"id="+id+", product_name='"+productName+'\''+", product_id="+productId+", product_text='"+productText+'\''+", rule="+rule+'}';
 }
 }

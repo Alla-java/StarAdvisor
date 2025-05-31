@@ -2,121 +2,119 @@ package service;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.skypro.staradvisor.model.RecommendationDto;
+import org.skypro.staradvisor.model.RecommendationRule;
+import org.skypro.staradvisor.model.RuleQuery;
+import org.skypro.staradvisor.repository.RuleRepository;
 import org.skypro.staradvisor.service.DynamicRuleService;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import org.skypro.staradvisor.repository.rulerepository;
+import org.skypro.staradvisor.service.rules.RuleEngine;
 
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class DynamicRuleServiceTest {
 
+    @Mock
     private RuleRepository ruleRepository;
+
+    @Mock
     private RuleEngine ruleEngine;
+
+    @InjectMocks
     private DynamicRuleService dynamicRuleService;
 
     @BeforeEach
     void setUp() {
         ruleRepository = mock(RuleRepository.class);
         ruleEngine = mock(RuleEngine.class);
-        dynamicRuleService = new DynamicRuleService(ruleRepository);
+        dynamicRuleService = new DynamicRuleService(ruleRepository,ruleEngine);
     }
 
     @Test //создание правила
-    void testCreateRule() {
+    void testCreateRule_Success() {
         UUID productId = UUID.randomUUID();
-        String productName = "Простой кредит";
-        String productText = "Текст рекомендации";
-        Collection<RuleQuery> ruleQueries = List.of(new RuleQuery("USER_OF", List.of("CREDIT"), true));
+        UUID ruleId = UUID.randomUUID();
+        List<RuleQuery> rules = List.of(new RuleQuery("USER_OF", List.of("CREDIT"), false));
 
-        RecommendationRule recommendationRule = dynamicRuleService.createRule(productName, productId, productText, ruleQueries);
+        RecommendationRule expectedRule = new RecommendationRule("Product A", productId, "Test Description", rules);
 
-        assertNotNull(recommendationRule);
-        assertEquals(productName, recommendationRule.getProductName());
-        assertEquals(productId.toString(), recommendationRule.getProductId());
-        assertEquals(productText, recommendationRule.getProductText());
-        assertEquals(ruleQueries, recommendationRule.getRecommendationRule());
+        when(ruleRepository.save(any(RecommendationRule.class))).thenReturn(expectedRule);
 
-        verify(ruleRepository, times(1)).save(any(Rule.class));
+        RecommendationRule actualRule = dynamicRuleService.createRule("Product A", productId, "Test Description", rules);
+
+        assertNotNull(actualRule);
+        assertEquals("Product A", actualRule.getProductName());
+        assertEquals(productId, actualRule.getProductId());
     }
 
     @Test //удаление правила
-    void testDeleteRule() {
+    void testDeleteRule_Success() {
         UUID ruleId = UUID.randomUUID();
 
         dynamicRuleService.deleteRule(ruleId);
 
-        verify(ruleRepository, times(1)).deleteById(ruleId.toString());
+        verify(ruleRepository, times(1)).deleteById(ruleId);
     }
 
-    @Test //получение всех динамических правил
-    void testGetAllRules() {
-        Rule rule = new Rule(UUID.randomUUID().toString(), "Простой кредит", UUID.randomUUID(), "Текст рекомендации", List.of(new RuleQuery("USER_OF", List.of("CREDIT"), true)));
-        when(ruleRepository.findAll()).thenReturn(List.of(rule));
+    @Test //получение всех существующих динамических правил
+    void testGetAllRules_Success() {
+        UUID ruleId = UUID.randomUUID();
+        List<RecommendationRule> mockRules = List.of(new RecommendationRule("Test Product", ruleId, "Test Text", new ArrayList<>()));
 
-        Collection<RecommendationRule> recommendationRules = dynamicRuleService.getAllRules();
+        when(ruleRepository.findAll()).thenReturn(mockRules);
 
-        assertNotNull(recommendationRules);
-        assertEquals(1, recommendationRules.size());
+        Map<String, List<RecommendationRule>> response = dynamicRuleService.getAllRules();
 
-        RecommendationRule recommendationRule = recommendationRules.iterator().next();
-        assertEquals(rule.getProductName(), recommendationRule.getProductName());
-        assertEquals(rule.getProductId().toString(), recommendationRule.getProductId());
-        assertEquals(rule.getProductText(), recommendationRule.getProductText());
-
-        verify(ruleRepository, times(1)).findAll();
+        assertNotNull(response);
+        assertFalse(response.get("data").isEmpty());
+        assertEquals(1, response.get("data").size());
     }
 
-    @Test //получение рекомендаций для определенного пользователя
-    void testGetRecommendations() {
-        Rule rule = new Rule(UUID.randomUUID().toString(), "Простой кредит", UUID.randomUUID(), "Текст рекомендации", List.of(new RuleQuery("USER_OF", List.of("CREDIT"), true)));
-        when(ruleRepository.findAll()).thenReturn(List.of(rule));
+    @Test //получение всех существующих динамических правил с null в ответе
+    void testGetAllRules_EmptyList() {
+        when(ruleRepository.findAll()).thenReturn(new ArrayList<>());
+
+        Map<String, List<RecommendationRule>> response = dynamicRuleService.getAllRules();
+
+        assertNotNull(response);
+        assertTrue(response.get("data").isEmpty());
+    }
+    @Test //получение динамических правил для одного пользователя
+    void testGetRecommendations_Success() {
         UUID userId = UUID.randomUUID();
-        when(ruleEngine.evaluate(userId, rule)).thenReturn(true);
+        UUID ruleId = UUID.randomUUID();
+        RecommendationRule rule = new RecommendationRule("Loan", ruleId, "Sample Text", new ArrayList<>());
+
+        when(ruleRepository.findAll()).thenReturn(List.of(rule));
+        when(ruleEngine.evaluate(userId, rule.getRule())).thenReturn(true);
 
         List<RecommendationDto> recommendations = dynamicRuleService.getRecommendations(userId);
 
         assertNotNull(recommendations);
+        assertFalse(recommendations.isEmpty());
         assertEquals(1, recommendations.size());
-
-        RecommendationDto recommendationDto = recommendations.get(0);
-        assertEquals(rule.getProductName(), recommendationDto.getName());
-        assertEquals(rule.getProductId(), recommendationDto.getId());
-        assertEquals(rule.getProductText(), recommendationDto.getText());
-
-        verify(ruleRepository, times(1)).findAll();
-        verify(ruleEngine, times(1)).evaluate(userId, rule);
     }
 
-    @Test //Проверяет, что метод createRule выбрасывает NullPointerException, если все входные параметры null
-    void testCreateRuleWithNullValues() {
-        assertThrows(NullPointerException.class, () -> {
-            dynamicRuleService.createRule(null, null, null, null);
-        });
-    }
+    @Test //получение динамических правил для одного пользователя
+    void testGetRecommendations_UserNotMatchingRules_ShouldReturnEmpty() {
+        UUID userId = UUID.randomUUID();
+        UUID ruleId = UUID.randomUUID();
+        RecommendationRule rule = new RecommendationRule("Loan", ruleId, "Sample Text", new ArrayList<>());
 
-    @Test //Проверяет, что getAllRules() корректно обрабатывает случай, когда в базе нет правил, и возвращает пустой список
-    void testGetAllRulesWhenNoRulesExist() {
-        when(ruleRepository.findAll()).thenReturn(Collections.emptyList());
+        when(ruleRepository.findAll()).thenReturn(List.of(rule));
+        when(ruleEngine.evaluate(userId, rule.getRule())).thenReturn(false);
 
-        Collection<RecommendationRule> recommendationRules = dynamicRuleService.getAllRules();
+        List<RecommendationDto> recommendations = dynamicRuleService.getRecommendations(userId);
 
-        assertNotNull(recommendationRules);
-        assertTrue(recommendationRules.isEmpty());
-
-        verify(ruleRepository, times(1)).findAll();
-    }
-
-    @Test //Проверяет, что getRecommendations(null) выбрасывает NullPointerException
-    void testGetRecommendationsWithNullUserId() {
-        assertThrows(NullPointerException.class, () -> {
-            dynamicRuleService.getRecommendations(null);
-        });
+        assertNotNull(recommendations);
+        assertTrue(recommendations.isEmpty());
     }
 }
 

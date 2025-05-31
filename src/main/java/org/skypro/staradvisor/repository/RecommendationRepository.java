@@ -1,5 +1,6 @@
 package org.skypro.staradvisor.repository;
 
+import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -44,5 +45,14 @@ public class RecommendationRepository {
                         WHERE t.user_id = ? AND t.type = ? AND p.type = ?
                         """,
                 BigDecimal.class, userId.toString(), transactionType, productType);
+    }
+
+    //    @Query("""
+//        SELECT COUNT(*) FROM transactions t
+//        JOIN products p ON t.product_id = p.id
+//        WHERE t.user_id = :userId AND p.type = :productType
+//    """)
+    public Integer getTransactionCountByProductType(@Param("userId") UUID userId, @Param("productType") String productType) {
+        return null;
     }
 }
