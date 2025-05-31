@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.skypro.staradvisor.model.RecommendationDto;
+import org.skypro.staradvisor.service.DynamicRuleService;
 import org.skypro.staradvisor.service.RecommendationRuleSet;
 import org.skypro.staradvisor.service.RecommendationService;
 
@@ -16,8 +17,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class RecommendationServiceTest {
@@ -32,7 +32,8 @@ public class RecommendationServiceTest {
 
     @BeforeEach
     void setUp() {
-        recommendationService = new RecommendationService(List.of(ruleSet1, ruleSet2));
+        DynamicRuleService dynamicRuleService = mock(DynamicRuleService.class);
+        recommendationService = new RecommendationService(List.of(ruleSet1, ruleSet2), dynamicRuleService);
     }
 
     @Test

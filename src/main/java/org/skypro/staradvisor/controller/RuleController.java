@@ -59,7 +59,7 @@ public class RuleController {
      */
     @GetMapping
     public ResponseEntity<List<RecommendationRule>> getAllRules () {
-        List<RecommendationRule> rules = dynamicRuleService.getAllRules();
+        List<RecommendationRule> rules = (List<RecommendationRule>) dynamicRuleService.getAllRules();
         return ResponseEntity.ok(rules);
     }
 
