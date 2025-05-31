@@ -1,0 +1,46 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: igor_k
+      changes:
+        - createTable:
+            tableName: recommendation_rule
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: product_name
+                  type: VARCHAR(255)
+              - column:
+                  name: product_id
+                  type: UUID
+              - column:
+                  name: product_text
+                  type: TEXT
+
+        - createTable:
+            tableName: rule_query
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: query
+                  type: VARCHAR(255)
+              - column:
+                  name: arguments
+                  type: TEXT
+              - column:
+                  name: negate
+                  type: BOOLEAN
+              - column:
+                  name: recommendation_rule_id
+                  type: UUID
+                  constraints:
+                    foreignKeyName: fk_rule_query_to_rule
+                    references: recommendation_rule(id)
