@@ -34,9 +34,9 @@ public class RuleController {
     * @return ResponseEntity с созданным правилом и статусом 200 OK
     */
     @PostMapping
-    public ResponseEntity<RecommendationRule> createRule(@RequestParam String productName,
-                                                         @RequestParam UUID uuid,
-                                                         @RequestParam String productText,
+    public ResponseEntity<RecommendationRule> createRule(@RequestBody String productName,
+                                                         @RequestBody UUID uuid,
+                                                         @RequestBody String productText,
                                                          @RequestBody List<RuleQuery> rule) {
         RecommendationRule createdRule = dynamicRuleService.createRule(productName, uuid, productText, rule);
         return ResponseEntity.ok(createdRule);
