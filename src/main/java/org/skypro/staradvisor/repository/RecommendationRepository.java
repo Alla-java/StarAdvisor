@@ -1,5 +1,6 @@
 package org.skypro.staradvisor.repository;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -22,7 +23,7 @@ public class RecommendationRepository {
     public RecommendationRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
-
+    @Cacheable(value = "productUsageCache", key = "#userId.toString() + '-' + #productType")
     public boolean userUsesProductType(UUID userId, String productType) {
 
         return Boolean.TRUE.equals(jdbcTemplate.queryForObject(
@@ -33,7 +34,7 @@ public class RecommendationRepository {
                         """,
                 Boolean.class, userId.toString(), productType));
     }
-
+    @Cacheable(value = "transactionSumCache", key = "#userId.toString() + '-' + #transactionType + '-' + #productType")
     public BigDecimal getSumByTransactionTypeAndProductType(
             UUID userId, String transactionType, String productType) {
 
