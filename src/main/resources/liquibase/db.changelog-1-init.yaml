@@ -20,6 +20,9 @@ databaseChangeLog:
               - column:
                   name: product_text
                   type: TEXT
+              - column:
+                  name: rule
+                  type: TEXT
 
         - createTable:
             tableName: rule_query
