@@ -1,64 +1,73 @@
 package org.skypro.staradvisor.model;
 
+import jakarta.persistence.*;
+
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
-public class RuleQuery{
+@Entity
+public class RuleQuery {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID id;
 
-private String query;
-private List<String> arguments;
-private boolean negate;
+    private String query;
+    private boolean negate;
 
-public RuleQuery(){
-};
+    @Convert(converter = StringListConverter.class)
+    private List<String> arguments;
 
-public RuleQuery(String query,List<String> arguments,boolean negate){
-    this.query=query;
-    this.arguments=arguments;
-    this.negate=negate;
-}
+    public RuleQuery() {
+    }
 
-public String getQuery(){
-    return query;
-}
+    public RuleQuery(String query, List<String> arguments, boolean negate) {
+        this.query = query;
+        this.arguments = arguments;
+        this.negate = negate;
+    }
 
-public void setQuery(String query){
-    this.query=query;
-}
+    public String getQuery() {
+        return query;
+    }
 
-public List<String> getArguments(){
-    return arguments;
-}
+    public void setQuery(String query) {
+        this.query = query;
+    }
 
-public void setArguments(List<String> arguments){
-    this.arguments=arguments;
-}
+    public List<String> getArguments() {
+        return arguments;
+    }
 
-public boolean isNegate(){
-    return negate;
-}
+    public void setArguments(List<String> arguments) {
+        this.arguments = arguments;
+    }
 
-public void setNegate(boolean negate){
-    this.negate=negate;
-}
+    public boolean isNegate() {
+        return negate;
+    }
 
-@Override
-public boolean equals(Object o){
-    if(this==o)
-        return true;
-    if(o==null||getClass()!=o.getClass())
-        return false;
-    RuleQuery that=(RuleQuery)o;
-    return negate==that.negate&&Objects.equals(query,that.query)&&Objects.equals(arguments,that.arguments);
-}
+    public void setNegate(boolean negate) {
+        this.negate = negate;
+    }
 
-@Override
-public int hashCode(){
-    return Objects.hash(query,arguments,negate);
-}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        RuleQuery that = (RuleQuery) o;
+        return negate == that.negate && Objects.equals(query, that.query) && Objects.equals(arguments, that.arguments);
+    }
 
-@Override
-public String toString(){
-    return "RuleQuery{"+"query='"+query+'\''+", arguments="+arguments+", negate="+negate+'}';
-}
+    @Override
+    public int hashCode() {
+        return Objects.hash(query, arguments, negate);
+    }
+
+    @Override
+    public String toString() {
+        return "RuleQuery{" + "query='" + query + '\'' + ", arguments=" + arguments + ", negate=" + negate + '}';
+    }
 }
