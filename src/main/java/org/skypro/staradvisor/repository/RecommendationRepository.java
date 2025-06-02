@@ -9,51 +9,49 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Repository
-public class RecommendationRepository {
-    private final JdbcTemplate jdbcTemplate;
+public class RecommendationRepository{
+private final JdbcTemplate jdbcTemplate;
 
-    public static final String PRODUCT_TYPE_DEBIT = "DEBIT";
-    public static final String PRODUCT_TYPE_CREDIT = "CREDIT";
-    public static final String PRODUCT_TYPE_SAVING = "SAVING";
-    public static final String PRODUCT_TYPE_INVEST = "INVEST";
+public static final String PRODUCT_TYPE_DEBIT="DEBIT";
+public static final String PRODUCT_TYPE_CREDIT="CREDIT";
+public static final String PRODUCT_TYPE_SAVING="SAVING";
+public static final String PRODUCT_TYPE_INVEST="INVEST";
 
-    public static final String TRANSACTION_TYPE_DEPOSIT = "DEPOSIT";
-    public static final String TRANSACTION_TYPE_WITHDRAW = "WITHDRAW";
+public static final String TRANSACTION_TYPE_DEPOSIT="DEPOSIT";
+public static final String TRANSACTION_TYPE_WITHDRAW="WITHDRAW";
 
-    public RecommendationRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-    @Cacheable(value = "productUsageCache", key = "#userId.toString() + '-' + #productType")
-    public boolean userUsesProductType(UUID userId, String productType) {
+public RecommendationRepository(JdbcTemplate jdbcTemplate){
+    this.jdbcTemplate=jdbcTemplate;
+}
 
-        return Boolean.TRUE.equals(jdbcTemplate.queryForObject(
-                """
-                        SELECT COUNT(*) > 0 FROM transactions t
-                        JOIN products p ON t.product_id = p.id
-                        WHERE t.user_id = ? AND p.type = ?
-                        """,
-                Boolean.class, userId.toString(), productType));
-    }
-    @Cacheable(value = "transactionSumCache", key = "#userId.toString() + '-' + #transactionType + '-' + #productType")
-    public BigDecimal getSumByTransactionTypeAndProductType(
-            UUID userId, String transactionType, String productType) {
+@Cacheable(value="productTypeCache", key="#user_id.toString() + '-' + #productType")
+public boolean userUsesProductType(UUID user_id,String productType){
 
-        return jdbcTemplate.queryForObject(
-                """
-                        SELECT COALESCE(SUM(t.amount), 0) 
-                        FROM transactions t
-                        JOIN products p ON t.product_id = p.id
-                        WHERE t.user_id = ? AND t.type = ? AND p.type = ?
-                        """,
-                BigDecimal.class, userId.toString(), transactionType, productType);
-    }
+    return Boolean.TRUE.equals(jdbcTemplate.queryForObject("""
+     SELECT COUNT(*) > 0 FROM transactions t
+     JOIN products p ON t.product_id = p.id
+     WHERE t.user_id = ? AND p.type = ?
+     """,Boolean.class,user_id.toString(),productType));
+}
 
-    //    @Query("""
-//        SELECT COUNT(*) FROM transactions t
-//        JOIN products p ON t.product_id = p.id
-//        WHERE t.user_id = :userId AND p.type = :productType
-//    """)
-    public Integer getTransactionCountByProductType(@Param("userId") UUID userId, @Param("productType") String productType) {
-        return null;
-    }
+@Cacheable(value="transactionSumCache", key="#user_id.toString() + '-' + #transactionType + '-' + #productType")
+public BigDecimal getSumByTransactionTypeAndProductType(UUID user_id,String transactionType,String productType){
+
+    return jdbcTemplate.queryForObject("""
+     SELECT COALESCE(SUM(t.amount), 0) 
+     FROM transactions t
+     JOIN products p ON t.product_id = p.id
+     WHERE t.user_id = ? AND t.type = ? AND p.type = ?
+     """,BigDecimal.class,user_id.toString(),transactionType,productType);
+}
+
+@Cacheable(value="transactionByProduct", key="#user_id.toString() + '-' + #transactionType + '-' + #productType")
+public Integer getTransactionCountByProductType(@Param("user_id") UUID user_id,@Param("productType") String productType){
+    Integer count=jdbcTemplate.queryForObject("""
+     SELECT COUNT(*) FROM transactions t
+     JOIN products p ON t.product_id = p.id
+     WHERE t.user_id = ? AND p.type = ?
+     """,Integer.class,user_id.toString(),productType);
+    return count!=null?count:0;
+}
 }

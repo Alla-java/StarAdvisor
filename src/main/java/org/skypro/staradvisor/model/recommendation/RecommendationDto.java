@@ -1,4 +1,4 @@
-package org.skypro.staradvisor.model;
+package org.skypro.staradvisor.model.recommendation;
 
 import java.util.Objects;
 import java.util.UUID;

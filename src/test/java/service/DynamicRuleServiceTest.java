@@ -1,16 +1,16 @@
 package service;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.skypro.staradvisor.model.RecommendationDto;
-import org.skypro.staradvisor.model.RecommendationRule;
-import org.skypro.staradvisor.model.RuleQuery;
+import org.skypro.staradvisor.model.recommendation.RecommendationDto;
+import org.skypro.staradvisor.model.rule.RecommendationRule;
+import org.skypro.staradvisor.model.rule.RuleQuery;
 import org.skypro.staradvisor.repository.RuleRepository;
-import org.skypro.staradvisor.service.DynamicRuleService;
+import org.skypro.staradvisor.service.rules.DynamicRuleService;
 import org.skypro.staradvisor.service.rules.RuleEngine;
 
 import java.util.*;
@@ -21,103 +21,96 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class DynamicRuleServiceTest {
 
-    @Mock
-    private RuleRepository ruleRepository;
+@Mock
+private RuleRepository ruleRepository;
 
-    @Mock
-    private RuleEngine ruleEngine;
+@Mock
+private RuleEngine ruleEngine;
 
-    @InjectMocks
-    private DynamicRuleService dynamicRuleService;
+@InjectMocks
+private DynamicRuleService dynamicRuleService;
 
-    @BeforeEach
-    void setUp() {
-        ruleRepository = mock(RuleRepository.class);
-        ruleEngine = mock(RuleEngine.class);
-        dynamicRuleService = new DynamicRuleService(ruleRepository,ruleEngine);
-    }
+private UUID userId;
+private UUID productId;
+private RecommendationRule rule;
 
-    @Test //создание правила
-    void testCreateRule_Success() {
-        UUID productId = UUID.randomUUID();
-        UUID ruleId = UUID.randomUUID();
-        List<RuleQuery> rules = List.of(new RuleQuery("USER_OF", List.of("CREDIT"), false));
-
-        RecommendationRule expectedRule = new RecommendationRule("Product A", productId, "Test Description", rules);
-
-        when(ruleRepository.save(any(RecommendationRule.class))).thenReturn(expectedRule);
-
-        RecommendationRule actualRule = dynamicRuleService.createRule("Product A", productId, "Test Description", rules);
-
-        assertNotNull(actualRule);
-        assertEquals("Product A", actualRule.getProductName());
-        assertEquals(productId, actualRule.getProductId());
-    }
-
-    @Test //удаление правила
-    void testDeleteRule_Success() {
-        UUID ruleId = UUID.randomUUID();
-
-        dynamicRuleService.deleteRule(ruleId);
-
-        verify(ruleRepository, times(1)).deleteById(ruleId);
-    }
-
-    @Test //получение всех существующих динамических правил
-    void testGetAllRules_Success() {
-        UUID ruleId = UUID.randomUUID();
-        List<RecommendationRule> mockRules = List.of(new RecommendationRule("Test Product", ruleId, "Test Text", new ArrayList<>()));
-
-        when(ruleRepository.findAll()).thenReturn(mockRules);
-
-        Map<String, List<RecommendationRule>> response = dynamicRuleService.getAllRules();
-
-        assertNotNull(response);
-        assertFalse(response.get("data").isEmpty());
-        assertEquals(1, response.get("data").size());
-    }
-
-    @Test //получение всех существующих динамических правил с null в ответе
-    void testGetAllRules_EmptyList() {
-        when(ruleRepository.findAll()).thenReturn(new ArrayList<>());
-
-        Map<String, List<RecommendationRule>> response = dynamicRuleService.getAllRules();
-
-        assertNotNull(response);
-        assertTrue(response.get("data").isEmpty());
-    }
-    @Test //получение динамических правил для одного пользователя
-    void testGetRecommendations_Success() {
-        UUID userId = UUID.randomUUID();
-        UUID ruleId = UUID.randomUUID();
-        RecommendationRule rule = new RecommendationRule("Loan", ruleId, "Sample Text", new ArrayList<>());
-
-        when(ruleRepository.findAll()).thenReturn(List.of(rule));
-        when(ruleEngine.evaluate(userId, rule.getRule())).thenReturn(true);
-
-        List<RecommendationDto> recommendations = dynamicRuleService.getRecommendations(userId);
-
-        assertNotNull(recommendations);
-        assertFalse(recommendations.isEmpty());
-        assertEquals(1, recommendations.size());
-    }
-
-    @Test //получение динамических правил для одного пользователя
-    void testGetRecommendations_UserNotMatchingRules_ShouldReturnEmpty() {
-        UUID userId = UUID.randomUUID();
-        UUID ruleId = UUID.randomUUID();
-        RecommendationRule rule = new RecommendationRule("Loan", ruleId, "Sample Text", new ArrayList<>());
-
-        when(ruleRepository.findAll()).thenReturn(List.of(rule));
-        when(ruleEngine.evaluate(userId, rule.getRule())).thenReturn(false);
-
-        List<RecommendationDto> recommendations = dynamicRuleService.getRecommendations(userId);
-
-        assertNotNull(recommendations);
-        assertTrue(recommendations.isEmpty());
-    }
+@BeforeEach
+void init() {
+    userId = UUID.randomUUID();
+    productId = UUID.randomUUID();
+    RuleQuery query = new RuleQuery("USER_OF", List.of("CREDIT"), false);
+    rule = new RecommendationRule("Credit Card", productId, "Get your card", List.of(query));
 }
 
+@Test
+void testCreateRule_withValidQuery_shouldSaveAndReturn() {
+    when(ruleRepository.save(any(RecommendationRule.class))).thenReturn(rule);
 
+    RecommendationRule created = dynamicRuleService.createRule(rule);
 
+    assertNotNull(created);
+    assertEquals("Credit Card", created.getProduct_name());
+    verify(ruleRepository, times(1)).save(rule);
+}
 
+@Test
+void testCreateRule_withInvalidQuery_shouldThrow() {
+    RuleQuery badQuery = new RuleQuery("INVALID_QUERY", List.of(), false);
+    RecommendationRule badRule = new RecommendationRule("Bad", UUID.randomUUID(), "Invalid", List.of(badQuery));
+
+    IllegalArgumentException ex = assertThrows(IllegalArgumentException.class,
+     () -> dynamicRuleService.createRule(badRule));
+
+    assertTrue(ex.getMessage().contains("Некорректный query"));
+    verify(ruleRepository, never()).save(any());
+}
+
+@Test
+void testDeleteRule_shouldCallRepository() {
+    UUID ruleId = UUID.randomUUID();
+
+    dynamicRuleService.deleteRule(ruleId);
+
+    verify(ruleRepository).deleteById(ruleId);
+}
+
+@Test
+void testGetAllRules_shouldReturnList() {
+    when(ruleRepository.findAll()).thenReturn(List.of(rule));
+
+    List<RecommendationRule> rules = dynamicRuleService.getAllRules();
+
+    assertEquals(1, rules.size());
+    assertEquals(rule.getProduct_id(), rules.get(0).getProduct_id());
+}
+
+@Test
+void testGetAllRules_emptyList() {
+    when(ruleRepository.findAll()).thenReturn(Collections.emptyList());
+
+    List<RecommendationRule> rules = dynamicRuleService.getAllRules();
+
+    assertTrue(rules.isEmpty());
+}
+
+@Test
+void testGetRecommendations_userMatchesRule() {
+    when(ruleRepository.findAll()).thenReturn(List.of(rule));
+    when(ruleEngine.evaluate(userId, rule.getRule())).thenReturn(true);
+
+    List<RecommendationDto> recommendations = dynamicRuleService.getRecommendations(userId);
+
+    assertEquals(1, recommendations.size());
+    assertEquals(rule.getProduct_name(), recommendations.get(0).getName());
+}
+
+@Test
+void testGetRecommendations_userDoesNotMatchRule() {
+    when(ruleRepository.findAll()).thenReturn(List.of(rule));
+    when(ruleEngine.evaluate(userId, rule.getRule())).thenReturn(false);
+
+    List<RecommendationDto> recommendations = dynamicRuleService.getRecommendations(userId);
+
+    assertTrue(recommendations.isEmpty());
+}
+}

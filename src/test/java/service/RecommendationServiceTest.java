@@ -6,10 +6,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.skypro.staradvisor.model.RecommendationDto;
-import org.skypro.staradvisor.service.DynamicRuleService;
-import org.skypro.staradvisor.service.RecommendationRuleSet;
-import org.skypro.staradvisor.service.RecommendationService;
+import org.skypro.staradvisor.model.recommendation.RecommendationDto;
+import org.skypro.staradvisor.service.rules.DynamicRuleService;
+import org.skypro.staradvisor.service.recommendation.RecommendationRuleSet;
+import org.skypro.staradvisor.service.recommendation.RecommendationService;
 
 import java.util.List;
 import java.util.Optional;
