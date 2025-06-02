@@ -1,4 +1,4 @@
-package org.skypro.staradvisor.model;
+package org.skypro.staradvisor.model.rule;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

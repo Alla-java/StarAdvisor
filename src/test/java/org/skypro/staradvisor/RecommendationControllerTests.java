@@ -9,8 +9,8 @@ import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 import org.skypro.staradvisor.controller.RecommendationController;
-import org.skypro.staradvisor.model.RecommendationDto;
-import org.skypro.staradvisor.service.RecommendationService;
+import org.skypro.staradvisor.model.recommendation.RecommendationDto;
+import org.skypro.staradvisor.service.recommendation.RecommendationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 

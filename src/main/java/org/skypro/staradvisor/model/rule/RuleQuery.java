@@ -1,4 +1,4 @@
-package org.skypro.staradvisor.model;
+package org.skypro.staradvisor.model.rule;
 
 import jakarta.persistence.*;
 
@@ -15,7 +15,7 @@ public class RuleQuery {
     private String query;
     private boolean negate;
 
-    @Convert(converter = StringListConverter.class)
+    @Convert(converter = RuleQueryListConverter.class)
     private List<String> arguments;
 
     public RuleQuery() {

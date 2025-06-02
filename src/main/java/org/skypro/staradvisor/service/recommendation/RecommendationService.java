@@ -1,7 +1,7 @@
-package org.skypro.staradvisor.service;
+package org.skypro.staradvisor.service.recommendation;
 
-import org.skypro.staradvisor.model.RecommendationDto;
-import org.skypro.staradvisor.service.DynamicRuleService;
+import org.skypro.staradvisor.model.recommendation.RecommendationDto;
+import org.skypro.staradvisor.service.rules.DynamicRuleService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

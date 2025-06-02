@@ -1,7 +1,7 @@
 package org.skypro.staradvisor.service.rules;
 
 
-import org.skypro.staradvisor.model.RuleQuery;
+import org.skypro.staradvisor.model.rule.RuleQuery;
 import org.skypro.staradvisor.repository.RecommendationRepository;
 import org.springframework.stereotype.Service;
 

@@ -16,7 +16,7 @@ public class CacheConfig {
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
                 "productTypeCache",
-                "transactionSumCache"
+                "transactionSumCache","transactionByProduct"
         );
         cacheManager.setCaffeine(
                 Caffeine.newBuilder()
