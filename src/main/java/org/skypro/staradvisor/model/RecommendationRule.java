@@ -1,10 +1,20 @@
 package org.skypro.staradvisor.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+
+@JsonPropertyOrder({
+        "productName",
+        "productId",
+        "productText",
+        "id",
+        "rule"
+})
 
 @Entity
 public class RecommendationRule{
@@ -12,8 +22,13 @@ public class RecommendationRule{
 @GeneratedValue(strategy=GenerationType.AUTO)
 private UUID id;
 
+@JsonProperty("product_name")
 private String productName;
+
+@JsonProperty("product_id")
 private UUID productId;
+
+@JsonProperty("product_text")
 private String productText;
 
 @Convert(converter=RuleQueryListConverter.class)

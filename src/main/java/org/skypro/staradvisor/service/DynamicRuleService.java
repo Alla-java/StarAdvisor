@@ -35,11 +35,8 @@ public class DynamicRuleService {
     }
 
     //Метод получения списка динамических правил
-    public Map<String, List<RecommendationRule>> getAllRules() {
-        List<RecommendationRule> rules = ruleRepository.findAll();
-        Map<String, List<RecommendationRule>> response = new HashMap<>();
-        response.put("data", rules);
-        return response;
+    public List<RecommendationRule> getAllRules() {
+        return ruleRepository.findAll();
     }
 
     //Метод получения списка рекомендаций на основе хранимых динамических правил из БД
