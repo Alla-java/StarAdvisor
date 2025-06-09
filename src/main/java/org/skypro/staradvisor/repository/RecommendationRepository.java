@@ -5,7 +5,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
-
 import java.math.BigDecimal;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -66,6 +65,7 @@ private UUID findUserIdByUsername(String username){
     }catch(EmptyResultDataAccessException e){
         throw new NoSuchElementException("User not found with username: "+username);
     }
+
 }
 
 @Cacheable("userFullNameByUserIdCache")
