@@ -10,6 +10,7 @@ import org.skypro.staradvisor.model.RecommendationDto;
 import org.skypro.staradvisor.model.RecommendationRule;
 import org.skypro.staradvisor.model.RuleQuery;
 import org.skypro.staradvisor.repository.RuleRepository;
+import org.skypro.staradvisor.repository.RuleStatisticRepository;
 import org.skypro.staradvisor.service.DynamicRuleService;
 import org.skypro.staradvisor.service.rules.RuleEngine;
 
@@ -27,6 +28,9 @@ public class DynamicRuleServiceTest {
     @Mock
     private RuleEngine ruleEngine;
 
+    @Mock
+    private RuleStatisticRepository ruleStatisticRepository;
+
     @InjectMocks
     private DynamicRuleService dynamicRuleService;
 
@@ -34,7 +38,7 @@ public class DynamicRuleServiceTest {
     void setUp() {
         ruleRepository = mock(RuleRepository.class);
         ruleEngine = mock(RuleEngine.class);
-        dynamicRuleService = new DynamicRuleService(ruleRepository,ruleEngine);
+        dynamicRuleService = new DynamicRuleService(ruleRepository,ruleEngine,ruleStatisticRepository);
     }
 
     @Test //создание правила

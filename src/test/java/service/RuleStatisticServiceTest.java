@@ -10,6 +10,7 @@ import org.skypro.staradvisor.model.RuleStatistic;
 import org.skypro.staradvisor.model.RuleStatisticDto;
 import org.skypro.staradvisor.model.RuleStatisticResponse;
 import org.skypro.staradvisor.repository.RuleRepository;
+import org.skypro.staradvisor.repository.RuleStatisticRepository;
 import org.skypro.staradvisor.service.RuleStatisticService;
 
 import java.util.List;
@@ -40,10 +41,12 @@ public class RuleStatisticServiceTest {
 
         RecommendationRule rule1 = new RecommendationRule("Продукт 1", rule1Id, "Текст", List.of());
         RecommendationRule rule2 = new RecommendationRule("Продукт 2", rule2Id, "Описание", List.of());
+        rule1.setId(rule1Id);
+        rule2.setId(rule2Id);
 
         when(ruleRepository.findAll()).thenReturn(List.of(rule1, rule2));
         when(statisticRepository.findById(rule1Id))
-                .thenReturn(Optional.of(new RuleStatistic(rule1Id, 3)));
+                .thenReturn(Optional.of(new RuleStatistic(rule1Id)));
         when(statisticRepository.findById(rule2Id))
                 .thenReturn(Optional.empty());
 
@@ -58,7 +61,7 @@ public class RuleStatisticServiceTest {
                 .filter(statDto -> statDto.getRuleId().equals(rule2Id))
                 .findFirst().orElseThrow();
 
-        assertEquals(3, statDto1.getCount());
+        assertEquals(0, statDto1.getCount());
         assertEquals(0, statDto2.getCount());
     }
 

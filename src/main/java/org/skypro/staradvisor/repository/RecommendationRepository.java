@@ -6,7 +6,9 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -55,21 +57,21 @@ public Integer getTransactionCountByProductType(UUID userId,String productType){
      """,Integer.class,userId,productType);
 }
 
-@Cacheable("userIdByUsernameCache")
-private UUID findUserIdByUsername(String username){
-    try{
-        return jdbcTemplate.queryForObject("""
-         SELECT id FROM users 
-         WHERE username = ?
-         """,UUID.class,username);
-    }catch(EmptyResultDataAccessException e){
-        throw new NoSuchElementException("User not found with username: "+username);
-    }
 
+@Cacheable("userIdByUsernameCache")
+public Optional<UUID> findUserIdByUsername(String username) {
+    String sql = "SELECT id FROM users WHERE username = ?";
+    List<UUID> results = jdbcTemplate.query(sql, new Object[]{username}, (rs,rowNum) -> UUID.fromString(rs.getString("id")));
+
+    if (results.size() == 1) {
+        return Optional.of(results.get(0));
+    } else {
+        return Optional.empty(); // либо не найдено, либо найдено больше одного
+    }
 }
 
 @Cacheable("userFullNameByUserIdCache")
-private String getUserFullName(UUID userId){
+public String getUserFullName(UUID userId){
     try{
         return jdbcTemplate.queryForObject("""
          SELECT CONCAT(FIRST_NAME,' ',LAST_NAME) FROM users 
