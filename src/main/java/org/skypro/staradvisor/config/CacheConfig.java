@@ -15,8 +15,11 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
+                "productUsageCache",
                 "productTypeCache",
-                "transactionSumCache"
+                "transactionSumCache",
+                "userCache",
+                "userNameCache"
         );
         cacheManager.setCaffeine(
                 Caffeine.newBuilder()

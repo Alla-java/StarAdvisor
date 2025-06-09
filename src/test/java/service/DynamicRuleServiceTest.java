@@ -70,21 +70,21 @@ public class DynamicRuleServiceTest {
 
         when(ruleRepository.findAll()).thenReturn(mockRules);
 
-        Map<String, List<RecommendationRule>> response = dynamicRuleService.getAllRules();
+        List<RecommendationRule> response = dynamicRuleService.getAllRules();
 
         assertNotNull(response);
-        assertFalse(response.get("data").isEmpty());
-        assertEquals(1, response.get("data").size());
+        assertEquals(1, response.size());
+        assertEquals("Test Product", response.get(0).getProductName());
     }
 
     @Test //получение всех существующих динамических правил с null в ответе
     void testGetAllRules_EmptyList() {
         when(ruleRepository.findAll()).thenReturn(new ArrayList<>());
 
-        Map<String, List<RecommendationRule>> response = dynamicRuleService.getAllRules();
+        List<RecommendationRule> response = dynamicRuleService.getAllRules();
 
         assertNotNull(response);
-        assertTrue(response.get("data").isEmpty());
+        assertTrue(response.isEmpty());
     }
     @Test //получение динамических правил для одного пользователя
     void testGetRecommendations_Success() {
