@@ -47,3 +47,24 @@ databaseChangeLog:
                   constraints:
                     foreignKeyName: fk_rule_query_to_rule
                     references: recommendation_rule(id)
+  - changeSet:
+      id: 2
+      author: SmthInUrEye
+      changes:
+        - createTable:
+            tableName: rule_statistic
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: count
+                  type: BIGINT
+              - column:
+                  name: rule_id
+                  type: UUID
+                  constraints:
+                    foreignKeyName: fk_rule_statistic_to_rule
+                    references: recommendation_rule(id)
