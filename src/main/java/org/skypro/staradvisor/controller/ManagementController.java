@@ -13,11 +13,11 @@ import java.util.Objects;
 public class ManagementController {
 
     private final CacheManager cacheManager;
-    //private final BuildProperties buildProperties;
+    private final BuildProperties buildProperties;
 
-    public ManagementController(CacheManager cacheManager) {
+    public ManagementController(CacheManager cacheManager, BuildProperties buildProperties) {
         this.cacheManager = cacheManager;
-        //this.buildProperties = buildProperties;
+        this.buildProperties = buildProperties;
     }
 
     @PostMapping("/clear-caches")
@@ -29,8 +29,7 @@ public class ManagementController {
     @GetMapping("/info")
     public ResponseEntity<AppInfo> getAppInfo() {
         return ResponseEntity.ok(new AppInfo(
-                "StarAdvisor", "23.3"
-                //buildProperties.getVersion()
+                "StarAdvisor", buildProperties.getVersion()
         ));
     }
 
